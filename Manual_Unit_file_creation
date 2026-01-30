@@ -1,0 +1,43 @@
+Addon Unit file for RHEL linux.
+Path /etc/systemd/system/<app>
+If you have a bash script in any path and want to create custom made unit file.
+let us consider the path of the script is /usr/local/bin/<app.sh>
+
+Create the unit file.
+vi /etc/systemd/system/app.service
+
+In this file app.service mention below. Need to tweak according to the requirement.
+
+[Unit]
+Description=My Custom Application Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/app.sh
+Restart=on-failure
+RestartSec=5
+User=appuser
+Group=appuser
+Environment=ENV=production
+WorkingDirectory=/usr/local/bin
+
+[Install]
+WantedBy=multi-user.target
+
+Save and exit the file.
+IMP fields that requires in this file are:
+
+ExecStart= → required
+Type=simple → default, best for scripts
+User= → don’t run as root unless needed
+WantedBy=multi-user.target → normal system services
+
+Reload systemd:
+#systemctl daemon-reload
+Enable at boot
+#systemctl enable <app>
+Start now
+#systemctl start <app>
+View logs
+journalctl -u <app> -f
